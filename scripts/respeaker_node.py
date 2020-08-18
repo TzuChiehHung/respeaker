@@ -145,12 +145,6 @@ class RespeakerNode(object):
 
     def on_shutdown(self):
         try:
-            self.respeaker.close()
-        except:
-            pass
-        finally:
-            self.respeaker = None
-        try:
             self.respeaker_audio.stop()
         except:
             pass

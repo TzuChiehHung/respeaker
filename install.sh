@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# http://wiki.seeedstudio.com/ReSpeaker_2_Mics_Pi_HAT/
-
 
 install_system_updates(){
     echo "updating system."

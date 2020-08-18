@@ -10,7 +10,7 @@ class RespeakerSubscriber(object):
 
 
     def __init__(self):
-        self.sub_audio = rospy.Subscriber('/audio', AudioData, self.callback)
+        self.sub_audio = rospy.Subscriber('audio', AudioData, self.callback)
 
     def callback(self, data):
         data = np.fromstring(data.data, dtype=np.int16)
