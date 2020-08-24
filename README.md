@@ -1,18 +1,12 @@
-# respeaker
+# FLIR Lepton
 
-A ROS Package for ReSpeaker 2-Mics Pi HAT
+ROS Packages for ReSpeaker 2-Mics Pi HAT
 
-https://wiki.seeedstudio.com/ReSpeaker_2_Mics_Pi_HAT/
+## Packages
 
-## Install
+- respeaker
+- respeaker_msgs
 
-```
-./install.sh
-```
+## Reference
 
-## Use
-
-```
-rosrun respeaker respeaker_node.py
-rosrun respeaker respeaker_subscriber.py
-```
+- https://wiki.seeedstudio.com/ReSpeaker_2_Mics_Pi_HAT/
