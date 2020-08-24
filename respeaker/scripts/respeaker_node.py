@@ -5,7 +5,7 @@ from contextlib import contextmanager
 import os
 import sys
 import pyaudio
-from audio_common_msgs.msg import AudioData
+from respeaker_msgs.msg import RespeakerMsg
 import rospy
 import numpy as np
 
@@ -110,7 +110,8 @@ class RespeakerAudio(object):
         for chan in self.channels:
             chan_data = data[:, chan]
             # invoke callback
-            self.on_audio(chan_data.tostring(), chan)
+            sampwidth = self.pyaudio.get_sample_size(pyaudio.paInt16)
+            self.on_audio(chan_data, chan, sampwidth, self.rate)
         return None, pyaudio.paContinue
 
     def start(self):
@@ -134,8 +135,8 @@ class RespeakerNode(object):
         self.respeaker_audio = RespeakerAudio(self.on_audio, suppress_error=suppress_pyaudio_error)
 
         # advertise
-        self.pub_audio = rospy.Publisher('audio', AudioData, queue_size=10)
-        self.pub_audios = {c:rospy.Publisher('audio/channel%d' % c, AudioData, queue_size=10) for c in self.respeaker_audio.channels}
+        self.pub_audio = rospy.Publisher('audio', RespeakerMsg, queue_size=10)
+        self.pub_audios = {c:rospy.Publisher('audio/channel%d' % c, RespeakerMsg, queue_size=10) for c in self.respeaker_audio.channels}
 
         self.respeaker_audio.start()
         # self.info_timer = rospy.Timer(rospy.Duration(1.0 / self.update_rate),
@@ -159,10 +160,14 @@ class RespeakerNode(object):
     #                                    lambda e: self.respeaker.set_led_trace(),
     #                                    oneshot=True)
 
-    def on_audio(self, data, channel):
-        self.pub_audios[channel].publish(AudioData(data=data))
+    def on_audio(self, data, channel, sampwidth, fs):
+        audio = RespeakerMsg()
+        audio.sample_width = sampwidth
+        audio.frame_rate = fs
+        audio.data = data
+        self.pub_audios[channel].publish(audio)
         if channel == self.main_channel:
-            self.pub_audio.publish(AudioData(data=data))
+            self.pub_audio.publish(audio)
 
     # def on_timer(self, event):
     #     stamp = event.current_real or rospy.Time.now()

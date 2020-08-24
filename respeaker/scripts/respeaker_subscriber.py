@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import rospy
-from audio_common_msgs.msg import AudioData
+from respeaker_msgs.msg import RespeakerMsg
 import numpy as np
 
 
@@ -10,10 +10,9 @@ class RespeakerSubscriber(object):
 
 
     def __init__(self):
-        self.sub_audio = rospy.Subscriber('audio', AudioData, self.callback)
+        self.sub_audio = rospy.Subscriber('audio', RespeakerMsg, self.callback)
 
     def callback(self, data):
-        data = np.fromstring(data.data, dtype=np.int16)
         print(data)
 
 

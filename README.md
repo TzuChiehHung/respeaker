@@ -1,4 +1,4 @@
-# FLIR Lepton
+# ReSpeaker
 
 ROS Packages for ReSpeaker 2-Mics Pi HAT
 
