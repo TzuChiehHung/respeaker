@@ -1,0 +1,9 @@
+<launch>
+  <arg name="config" default="$(find respeaker)/params/config.yaml" />
+
+  <group ns="respeaker">
+    <rosparam file="$(arg config)" command="load" />
+    <node pkg="respeaker" type="respeaker_node.py" name="respeaker_node"/>
+  </group>
+
+</launch>

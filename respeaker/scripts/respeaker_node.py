@@ -39,14 +39,15 @@ def ignore_stderr(enable=True):
 class RespeakerAudio(object):
 
 
-    def __init__(self, on_audio, channels=None, suppress_error=True):
+    def __init__(self, on_audio, channels=None, suppress_error=True, sampling_rate=16000, chunk=1024):
         self.on_audio = on_audio
         with ignore_stderr(enable=suppress_error):
             self.pyaudio = pyaudio.PyAudio()
         self.available_channels = None
         self.channels = channels
         self.device_index = None
-        self.rate = 16000
+        self.rate = sampling_rate
+        self.chunk = chunk
 
         # find device
         count = self.pyaudio.get_device_count()
@@ -84,7 +85,7 @@ class RespeakerAudio(object):
             format=pyaudio.paInt16,
             channels=self.available_channels,
             rate=self.rate,
-            frames_per_buffer=1024,
+            frames_per_buffer=self.chunk,
             stream_callback=self.stream_callback,
             input_device_index=self.device_index,
         )
@@ -128,11 +129,14 @@ class RespeakerNode(object):
 
     def __init__(self):
         rospy.on_shutdown(self.on_shutdown)
-        self.update_rate = rospy.get_param('~update_rate', 10.0)
         self.main_channel = rospy.get_param('~main_channel', 0)
         suppress_pyaudio_error = rospy.get_param('~suppress_pyaudio_error', True)
 
-        self.respeaker_audio = RespeakerAudio(self.on_audio, suppress_error=suppress_pyaudio_error)
+        sampling_rate = rospy.get_param('sampling_rate', 16000)
+        chunk = rospy.get_param('chunk', 1024)
+
+        self.respeaker_audio = RespeakerAudio(
+            self.on_audio, suppress_error=suppress_pyaudio_error, sampling_rate=sampling_rate, chunk=chunk)
 
         # advertise
         self.pub_audio = rospy.Publisher('audio', RespeakerMsg, queue_size=10)
