@@ -166,6 +166,7 @@ class RespeakerNode(object):
 
     def on_audio(self, data, channel, sampwidth, fs):
         audio = RespeakerMsg()
+        audio.header.stamp = rospy.Time.now()
         audio.sample_width = sampwidth
         audio.frame_rate = fs
         audio.data = data
