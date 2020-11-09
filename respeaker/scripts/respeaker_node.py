@@ -3,6 +3,7 @@
 
 from contextlib import contextmanager
 import os
+import subprocess
 import sys
 import pyaudio
 from respeaker_msgs.msg import RespeakerMsg
@@ -223,5 +224,11 @@ class RespeakerNode(object):
 
 if __name__ == '__main__':
     rospy.init_node('respeaker_node')
+
+    # restore alsamixer state
+    config_path = os.path.join(os.path.dirname(__file__), '..', 'config', 'asound.state')
+    if os.path.isfile(config_path):
+        subprocess.Popen(['alsactl', '--file', config_path, 'restore'])
+
     RespeakerNode()
     rospy.spin()
